@@ -6,21 +6,21 @@ Sistema web de atendimento e suporte técnico feito com Django. Permite abrir e 
 
 ### Acesso
 
-![Tela de login](./tela-login.png)
+![Tela de login](./docs/tela-login.png)
 
 ### Fila da equipe de suporte
 
-![Fila de chamados](./fila-chamados.png)
+![Fila de chamados](./docs/fila-chamados.png)
 
 ### Chamados
 
-![Lista de chamados](./chamados.png)
+![Lista de chamados](./docs/chamados.png)
 
 ### Abertura de solicitação
 
-![Formulário de solicitação](./central-solicitacao.png)
+![Formulário de solicitação](./docs/central-solicitacao.png)
 
-> As imagens ficam na raiz do projeto. Mantenha esses nomes ou atualize os caminhos acima se os arquivos forem renomeados.
+> As capturas ficam em `docs/`. Mantenha esses nomes ou atualize os caminhos acima se os arquivos forem renomeados.
 
 ## Funcionalidades
 
@@ -76,7 +76,7 @@ knowledge/    Artigos e central de ajuda
 static/       CSS da interface
 templates/    Layout compartilhado e autenticação
 tickets/      Chamados, formulários, fluxo e telas
-*.png         Capturas de tela do projeto
+docs/         Capturas de tela do projeto
 ```
 
 ## Licença
