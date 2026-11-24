@@ -14,7 +14,8 @@
       <div class="d-flex align-items-center gap-3">
         <a class="nav-link text-light" href="{% url 'ticket_list' %}">Chamados</a>
         <a class="btn btn-sm btn-success" href="{% url 'ticket_create' %}">+ Novo chamado</a>
-        <span class="text-secondary small">{{ user.username }}</span>
+        <span class="text-light small">{{ user.get_full_name|default:user.username }}</span>
+        <span class="badge text-bg-secondary">{{ current_role.label }}</span>
         <form method="post" action="{% url 'logout' %}" class="m-0">
           {% csrf_token %}
           <button class="btn btn-sm btn-outline-light" type="submit">Sair</button>
@@ -26,9 +27,9 @@
 
   <main class="container pb-5">
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">
+      <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
       </div>
     {% endfor %}
     {% block content %}{% endblock %}

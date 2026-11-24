@@ -5,7 +5,9 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h1 class="h3 m-0">#{{ ticket.pk }} · {{ ticket.title }}</h1>
   <div class="d-flex gap-2">
-    <a class="btn btn-outline-primary" href="{% url 'ticket_update' ticket.pk %}">Editar</a>
+    {% if can_edit %}
+      <a class="btn btn-outline-primary" href="{% url 'ticket_update' ticket.pk %}">Editar</a>
+    {% endif %}
     <a class="btn btn-outline-secondary" href="{% url 'ticket_list' %}">Voltar</a>
   </div>
 </div>
@@ -23,10 +25,11 @@
         {% for note in ticket.notes.all %}
           <li class="list-group-item">
             <div class="small text-muted">
-              {{ note.created_at|date:"d/m/Y H:i" }} · {{ note.author.username }}
-              · {{ note.from_status }} → {{ note.to_status }}
+              {{ note.created_at|date:"d/m/Y H:i" }}
+              · {{ note.author.get_full_name|default:note.author.username }}
+              · {{ note.get_from_status_display }} → {{ note.get_to_status_display }}
             </div>
-            {{ note.text|linebreaksbr }}
+            {% if note.text %}{{ note.text|linebreaksbr }}{% endif %}
           </li>
         {% empty %}
           <li class="list-group-item text-muted">Nenhuma nota registrada ainda.</li>
@@ -36,19 +39,38 @@
   </div>
 
   <div class="col-lg-4">
-    <div class="card shadow-sm">
+    <div class="card shadow-sm mb-3">
       <ul class="list-group list-group-flush">
         <li class="list-group-item"><strong>Status:</strong> {{ ticket.get_status_display }}</li>
         <li class="list-group-item"><strong>Prioridade:</strong> {{ ticket.get_priority_display }}</li>
         <li class="list-group-item"><strong>Categoria:</strong> {{ ticket.get_category_display }}</li>
-        <li class="list-group-item"><strong>Solicitante:</strong> {{ ticket.requester }}</li>
-        <li class="list-group-item"><strong>Atendente:</strong> {{ ticket.assigned_to.username|default:"-" }}</li>
+        <li class="list-group-item"><strong>Solicitante:</strong> {{ ticket.requester.get_full_name|default:ticket.requester.username }}</li>
+        <li class="list-group-item"><strong>Atendente:</strong> {% if ticket.assigned_to %}{{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}{% else %}-{% endif %}</li>
         <li class="list-group-item"><strong>Aberto em:</strong> {{ ticket.created_at|date:"d/m/Y H:i" }}</li>
         {% if ticket.resolved_at %}
         <li class="list-group-item"><strong>Resolvido em:</strong> {{ ticket.resolved_at|date:"d/m/Y H:i" }}</li>
         {% endif %}
       </ul>
     </div>
+
+    {% if transitions %}
+    <div class="card shadow-sm">
+      <div class="card-header">Ações</div>
+      <div class="card-body">
+        {% for t in transitions %}
+        <form method="post" action="{% url 'ticket_transition' ticket.pk %}" class="mb-3">
+          {% csrf_token %}
+          <input type="hidden" name="target" value="{{ t.target }}">
+          {% if t.requires_note %}
+            <textarea name="note" class="form-control mb-2" rows="3" required
+                      placeholder="Nota técnica / diagnóstico (obrigatória)"></textarea>
+          {% endif %}
+          <button class="btn btn-primary w-100" type="submit">{{ t.label }}</button>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
