@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
@@ -24,25 +25,54 @@ FILTERS = (
 class TicketListView(LoginRequiredMixin, ListView):
     model = Ticket
     context_object_name = "tickets"
+    paginate_by = 10
 
     def get_queryset(self):
         qs = Ticket.objects.visible_to(self.request.user).select_related(
             "requester", "assigned_to"
         )
+        query = self.request.GET.get("q", "").strip()[:100]
+        if query:
+            search = Q(title__icontains=query) | Q(description__icontains=query)
+            if query.isdecimal():
+                search |= Q(pk=int(query))
+            search |= (
+                Q(requester__username__icontains=query)
+                | Q(requester__first_name__icontains=query)
+                | Q(requester__last_name__icontains=query)
+            )
+            qs = qs.filter(search)
+
         active = {
             name: self.request.GET[name]
             for name, _, _ in FILTERS
             if self.request.GET.get(name)
         }
+        if is_support(self.request.user) and self.request.GET.get("assigned") == "me":
+            qs = qs.filter(assigned_to=self.request.user)
         return qs.filter(**active)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        visible_tickets = Ticket.objects.visible_to(self.request.user)
+        counts = {
+            row["status"]: row["total"]
+            for row in visible_tickets.values("status").annotate(total=Count("pk"))
+        }
+        context["ticket_stats"] = [
+            (status, label, counts.get(status, 0))
+            for status, label in Ticket.Status.choices
+        ]
         context["filter_fields"] = [
             (name, placeholder, choices, self.request.GET.get(name, ""))
             for name, placeholder, choices in FILTERS
         ]
         context["is_support"] = is_support(self.request.user)
+        context["search_query"] = self.request.GET.get("q", "")[:100]
+        context["assigned_filter"] = self.request.GET.get("assigned", "")
+        query_params = self.request.GET.copy()
+        query_params.pop("page", None)
+        context["query_string"] = query_params.urlencode()
         return context
 
 

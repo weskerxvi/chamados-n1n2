@@ -98,6 +98,34 @@ h1, h2, h3, .navbar-brand { font-family: 'Manrope', sans-serif; letter-spacing: 
 .action-form:last-child { border-bottom: 0; }
 .action-form .btn { min-height: 40px; font-size: 12px; }
 .app-alert { border: 0; border-radius: 10px; font-size: 13px; box-shadow: var(--shadow); }
+.ticket-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.ticket-stat { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 17px 19px; border: 1px solid var(--line); border-radius: 13px; color: var(--ink); background: white; box-shadow: 0 8px 24px rgba(20,38,70,.04); text-decoration: none; transition: .18s ease; }
+.ticket-stat:hover { border-color: #cbd4fa; box-shadow: var(--shadow); transform: translateY(-1px); }
+.ticket-stat strong { font: 800 23px 'Manrope',sans-serif; }
+.stat-label { display: flex; align-items: center; gap: 8px; color: #76839a; font-size: 11px; font-weight: 600; }
+.stat-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stat-dot.status-ABERTO { background: #7187ec; }
+.stat-dot.status-N1 { background: #edb45f; }
+.stat-dot.status-N2 { background: #ae84d1; }
+.stat-dot.status-RESOLVIDO { background: #62c5a7; }
+.search-input { flex: 1 1 260px; }
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--line); color: #8995a9; font-size: 11px; }
+.pagination-actions { display: flex; gap: 7px; }
+.pagination-actions a, .pagination-actions span { padding: 7px 10px; border: 1px solid var(--line); border-radius: 7px; color: #465875; text-decoration: none; }
+.pagination-actions a:hover { border-color: #bdc9ff; color: var(--blue); }
+.pagination-actions .disabled { color: #bac2cf; }
+.knowledge-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 15px; }
+.knowledge-card { display: flex; min-height: 195px; flex-direction: column; padding: 21px; border: 1px solid var(--line); border-radius: 14px; background: white; box-shadow: 0 9px 25px rgba(20,38,70,.045); text-decoration: none; transition: .18s ease; }
+.knowledge-card:hover { border-color: #cbd4fa; box-shadow: var(--shadow); transform: translateY(-2px); }
+.knowledge-icon { display: grid; width: 36px; height: 36px; margin-bottom: 19px; place-items: center; border-radius: 11px; color: var(--blue); background: #eff2ff; font-size: 17px; }
+.knowledge-card h2 { margin: 0 0 8px; color: var(--ink); font-size: 15px; font-weight: 800; }
+.knowledge-card p { margin: 0; color: #8591a5; font-size: 11px; line-height: 1.7; }
+.knowledge-category { align-self: flex-start; margin-top: auto; padding-top: 14px; color: #7180a0; font-size: 10px; font-weight: 700; }
+.article-content { white-space: pre-line; }
+.knowledge-help-cta { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 13px; background: white; }
+.knowledge-help-cta strong { color: var(--ink); font-size: 12px; }
+.knowledge-help-cta span { color: #8490a3; font-size: 12px; }
+.knowledge-help-cta .btn { padding: 10px 15px; font-size: 11px; }
 .login-main { display: grid; flex: 1; place-items: center; padding-top: 42px; padding-bottom: 64px; }
 .login-wrap { display: grid; width: 100%; max-width: 950px; min-height: 500px; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid var(--line); border-radius: 22px; background: white; box-shadow: 0 24px 70px rgba(20,38,70,.13); }
 .login-art { position: relative; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 45px; color: white; background: radial-gradient(circle at 90% 10%,rgba(85,214,176,.22),transparent 32%), linear-gradient(145deg,#101d35,#1b3156); }
@@ -114,6 +142,8 @@ h1, h2, h3, .navbar-brand { font-family: 'Manrope', sans-serif; letter-spacing: 
 .login-form-wrap .btn-primary { min-height: 47px; margin-top: 9px; }
 .login-note { margin-top: 22px; color: #98a2b3; font-size: 10px; text-align: center; }
 @media (max-width: 900px) {
+  .ticket-stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .knowledge-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .filter-panel { align-items: stretch; flex-direction: column; }
   .filter-fields { flex-wrap: wrap; }
   .filter-fields .form-select { flex: 1 1 30%; }
@@ -122,10 +152,14 @@ h1, h2, h3, .navbar-brand { font-family: 'Manrope', sans-serif; letter-spacing: 
   .app-nav { padding: 12px 0; }
   .nav-actions { gap: 11px; }
   .nav-current, .user-name, .btn-logout { display: none; }
+  .nav-help { color: #d6dceb !important; font-size: 11px; }
   .app-main { padding-top: 26px; }
   .page-heading { align-items: flex-start; flex-direction: column; }
   .page-heading .btn { width: 100%; }
   .filter-fields { flex-direction: column; }
+  .ticket-stats, .knowledge-grid { grid-template-columns: 1fr 1fr; }
+  .ticket-stat { padding: 14px; }
+  .knowledge-help-cta { align-items: flex-start; flex-direction: column; }
   .filter-actions .btn-filter { flex: 1; }
   .app-footer .container { flex-direction: column; }
   .login-wrap { max-width: 480px; grid-template-columns: 1fr; }

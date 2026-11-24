@@ -11,24 +11,35 @@
   <a class="btn btn-primary px-4 py-3" href="{% url 'ticket_create' %}"><span aria-hidden="true">＋</span> Abrir chamado</a>
 </header>
 
+<section class="ticket-stats" aria-label="Resumo dos chamados">
+  {% for value, label, total in ticket_stats %}
+  <a class="ticket-stat" href="?status={{ value }}{% if search_query %}&q={{ search_query|urlencode }}{% endif %}">
+    <span class="stat-label"><i class="stat-dot status-{{ value }}"></i>{{ label }}</span>
+    <strong>{{ total }}</strong>
+  </a>
+  {% endfor %}
+</section>
+
 <form method="get" class="filter-panel">
-  <div class="filter-label"><span aria-hidden="true">⌕</span> Filtrar chamados</div>
+  <div class="filter-label"><span aria-hidden="true">⌕</span> Buscar e filtrar</div>
   <div class="filter-fields">
+    <input class="form-control search-input" type="search" name="q" value="{{ search_query }}" placeholder="Título, descrição, solicitante ou número" aria-label="Buscar chamados">
     {% for name, placeholder, choices, selected in filter_fields %}
     <select name="{{ name }}" class="form-select" aria-label="{{ placeholder }}">
       <option value="">{{ placeholder }}</option>
       {% for value, label in choices %}<option value="{{ value }}" {% if value == selected %}selected{% endif %}>{{ label }}</option>{% endfor %}
     </select>
     {% endfor %}
+    {% if is_support %}<select name="assigned" class="form-select" aria-label="Filtro por atendente"><option value="">Todos os atendentes</option><option value="me" {% if assigned_filter == "me" %}selected{% endif %}>Atribuídos a mim</option></select>{% endif %}
   </div>
   <div class="filter-actions">
-    <button class="btn btn-filter" type="submit">Aplicar filtros</button>
+    <button class="btn btn-filter" type="submit">Buscar</button>
     <a class="btn-clear" href="{% url 'ticket_list' %}">Limpar</a>
   </div>
 </form>
 
 <section class="table-card">
-  <div class="table-card-head"><strong>Chamados recentes</strong><span>{{ tickets|length }} resultado{{ tickets|length|pluralize:"s" }}</span></div>
+  <div class="table-card-head"><strong>Chamados recentes</strong><span>{{ page_obj.paginator.count }} resultado{{ page_obj.paginator.count|pluralize:"s" }}</span></div>
   <div class="table-responsive">
     <table class="table align-middle m-0">
       <thead><tr><th>#</th><th>Chamado</th><th>Categoria</th><th>Prioridade</th><th>Status</th><th>Solicitante</th><th>Atendente</th><th>Aberto em</th></tr></thead>
@@ -50,5 +61,14 @@
       </tbody>
     </table>
   </div>
+  {% if is_paginated %}
+  <nav class="pagination-bar" aria-label="Paginação dos chamados">
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    <div class="pagination-actions">
+      {% if page_obj.has_previous %}<a href="?{{ query_string }}{% if query_string %}&{% endif %}page={{ page_obj.previous_page_number }}">← Anterior</a>{% else %}<span class="disabled">← Anterior</span>{% endif %}
+      {% if page_obj.has_next %}<a href="?{{ query_string }}{% if query_string %}&{% endif %}page={{ page_obj.next_page_number }}">Próxima →</a>{% else %}<span class="disabled">Próxima →</span>{% endif %}
+    </div>
+  </nav>
+  {% endif %}
 </section>
 {% endblock %}
