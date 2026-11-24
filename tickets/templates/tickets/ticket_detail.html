@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Chamado #{{ ticket.pk }} | Helpdesk{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 m-0">#{{ ticket.pk }} · {{ ticket.title }}</h1>
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-primary" href="{% url 'ticket_update' ticket.pk %}">Editar</a>
+    <a class="btn btn-outline-secondary" href="{% url 'ticket_list' %}">Voltar</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-3">
+      <div class="card-header">Descrição</div>
+      <div class="card-body">{{ ticket.description|linebreaks }}</div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header">Histórico de atendimento</div>
+      <ul class="list-group list-group-flush">
+        {% for note in ticket.notes.all %}
+          <li class="list-group-item">
+            <div class="small text-muted">
+              {{ note.created_at|date:"d/m/Y H:i" }} · {{ note.author.username }}
+              · {{ note.from_status }} → {{ note.to_status }}
+            </div>
+            {{ note.text|linebreaksbr }}
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">Nenhuma nota registrada ainda.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Status:</strong> {{ ticket.get_status_display }}</li>
+        <li class="list-group-item"><strong>Prioridade:</strong> {{ ticket.get_priority_display }}</li>
+        <li class="list-group-item"><strong>Categoria:</strong> {{ ticket.get_category_display }}</li>
+        <li class="list-group-item"><strong>Solicitante:</strong> {{ ticket.requester }}</li>
+        <li class="list-group-item"><strong>Atendente:</strong> {{ ticket.assigned_to.username|default:"-" }}</li>
+        <li class="list-group-item"><strong>Aberto em:</strong> {{ ticket.created_at|date:"d/m/Y H:i" }}</li>
+        {% if ticket.resolved_at %}
+        <li class="list-group-item"><strong>Resolvido em:</strong> {{ ticket.resolved_at|date:"d/m/Y H:i" }}</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

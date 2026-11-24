@@ -40,7 +40,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -94,7 +94,9 @@ TIME_ZONE = "America/Sao_Paulo"
 
 LOGIN_URL = "login"
 
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "ticket_list"
+
+LOGOUT_REDIRECT_URL = "login"
 
 USE_I18N = True
 
