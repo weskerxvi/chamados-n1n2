@@ -1,4 +1,5 @@
 from pathlib import Path
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "accounts",
     "tickets",
     "knowledge",
 ]
@@ -47,10 +49,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "accounts.context_processors.role",
             ],
         },
     },
 ]
+
+MESSAGE_TAGS = {messages.ERROR: "danger"}
 
 WSGI_APPLICATION = 'config.wsgi.application'
 

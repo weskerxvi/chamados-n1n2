@@ -1,6 +1,16 @@
 from django.conf import settings
 from django.db import models
-from django.utils import timezone
+
+from accounts.roles import is_support
+
+
+class TicketQuerySet(models.QuerySet):
+    def visible_to(self, user):
+        if not user.is_authenticated:
+            return self.none()
+        if is_support(user):
+            return self
+        return self.filter(requester=user)
 
 
 class Ticket(models.Model):
@@ -24,22 +34,31 @@ class Ticket(models.Model):
 
     title = models.CharField("Título", max_length=150)
     description = models.TextField("Descrição")
-    category = models.CharField(max_length=20, choices=Category.choices)
+    category = models.CharField("Categoria", max_length=20, choices=Category.choices)
     priority = models.CharField(
-        max_length=10, choices=Priority.choices, default=Priority.MEDIUM
+        "Prioridade", max_length=10, choices=Priority.choices, default=Priority.MEDIUM
     )
     status = models.CharField(
-        max_length=10, choices=Status.choices, default=Status.OPEN
+        "Status", max_length=10, choices=Status.choices, default=Status.OPEN
     )
-    requester = models.CharField("Solicitante", max_length=100)
+    requester = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Solicitante",
+        on_delete=models.PROTECT,
+        related_name="requested_tickets",
+    )
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        null=True, blank=True,
+        verbose_name="Atendente",
+        null=True,
+        blank=True,
         on_delete=models.SET_NULL,
-        related_name="tickets",
+        related_name="assigned_tickets",
     )
     created_at = models.DateTimeField(auto_now_add=True)
     resolved_at = models.DateTimeField(null=True, blank=True)
+
+    objects = TicketQuerySet.as_manager()
 
     class Meta:
         ordering = ["-created_at"]
@@ -55,17 +74,12 @@ class Ticket(models.Model):
 
 
 class TicketNote(models.Model):
-    """Histórico de atendimento: cada mudança de status gera uma nota."""
 
-    ticket = models.ForeignKey(
-        Ticket, on_delete=models.CASCADE, related_name="notes"
-    )
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT
-    )
-    from_status = models.CharField(max_length=10)
-    to_status = models.CharField(max_length=10)
-    text = models.TextField("Nota técnica / Diagnóstico")
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="notes")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    from_status = models.CharField(max_length=10, choices=Ticket.Status.choices)
+    to_status = models.CharField(max_length=10, choices=Ticket.Status.choices)
+    text = models.TextField("Nota técnica / Diagnóstico", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
