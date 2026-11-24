@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Central de ajuda | Helpdesk{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+  <div>
+    <div class="eyebrow">Helpdesk <span aria-hidden="true">/</span> Conhecimento</div>
+    <h1>Central de ajuda</h1>
+    <p class="page-subtitle">Orientações rápidas para resolver dúvidas e problemas comuns.</p>
+  </div>
+  <a class="btn btn-primary px-4 py-3" href="{% url 'ticket_create' %}">Ainda precisa de ajuda? <span aria-hidden="true">→</span></a>
+</header>
+
+<form method="get" class="filter-panel">
+  <div class="filter-label"><span aria-hidden="true">⌕</span> Encontrar uma solução</div>
+  <div class="filter-fields">
+    <input class="form-control search-input" type="search" name="q" value="{{ search_query }}" placeholder="Busque por assunto ou sintoma" aria-label="Buscar artigos">
+    <select class="form-select" name="category" aria-label="Filtrar por categoria">
+      <option value="">Todas as categorias</option>
+      {% for category in categories %}<option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>{{ category }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="filter-actions"><button class="btn btn-filter" type="submit">Buscar</button><a class="btn-clear" href="{% url 'knowledge_list' %}">Limpar</a></div>
+</form>
+
+{% if articles %}
+<section class="knowledge-grid">
+  {% for article in articles %}
+  <a class="knowledge-card" href="{% url 'knowledge_detail' article.pk %}">
+    <span class="knowledge-icon" aria-hidden="true">✳</span>
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.symptoms|truncatewords:22 }}</p>
+    {% if article.category %}<span class="knowledge-category">{{ article.category }}</span>{% endif %}
+  </a>
+  {% endfor %}
+</section>
+{% else %}
+<section class="table-card"><div class="empty-state"><span class="empty-icon" aria-hidden="true">⌕</span><strong>Nenhum artigo encontrado</strong><span>Tente buscar por outro termo ou envie um chamado para nossa equipe.</span></div></section>
+{% endif %}
+
+{% if is_paginated %}
+<nav class="pagination-bar mt-3" aria-label="Paginação da central de ajuda">
+  <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+  <div class="pagination-actions">
+    {% if page_obj.has_previous %}<a href="?q={{ search_query|urlencode }}&category={{ selected_category|urlencode }}&page={{ page_obj.previous_page_number }}">← Anterior</a>{% else %}<span class="disabled">← Anterior</span>{% endif %}
+    {% if page_obj.has_next %}<a href="?q={{ search_query|urlencode }}&category={{ selected_category|urlencode }}&page={{ page_obj.next_page_number }}">Próxima →</a>{% else %}<span class="disabled">Próxima →</span>{% endif %}
+  </div>
+</nav>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} | Central de ajuda{% endblock %}
+
+{% block content %}
+<header class="page-heading">
+  <div>
+    <div class="eyebrow"><a href="{% url 'knowledge_list' %}" class="text-decoration-none">Central de ajuda</a> <span aria-hidden="true">/</span> {% if article.category %}{{ article.category }}{% else %}Artigo{% endif %}</div>
+    <h1>{{ article.title }}</h1>
+    <p class="page-subtitle">Atualizado em {{ article.updated_at|date:"d/m/Y" }}</p>
+  </div>
+  <a class="btn btn-outline-secondary px-3 py-2" href="{% url 'knowledge_list' %}">← Todos os artigos</a>
+</header>
+
+<div class="row justify-content-center"><div class="col-lg-9">
+  <article class="detail-card mb-3">
+    <div class="detail-card-head">Quando usar esta orientação</div>
+    <div class="detail-card-body article-content">{{ article.symptoms }}</div>
+  </article>
+  <article class="detail-card">
+    <div class="detail-card-head">Passo a passo</div>
+    <div class="detail-card-body article-content">{{ article.solution }}</div>
+  </article>
+  <div class="knowledge-help-cta"><div><strong>Não resolveu?</strong><span> Nossa equipe pode ajudar com seu caso específico.</span></div><a class="btn btn-primary" href="{% url 'ticket_create' %}">Abrir chamado →</a></div>
+</div></div>
+{% endblock %}

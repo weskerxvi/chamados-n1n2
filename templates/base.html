@@ -22,6 +22,7 @@
       {% if user.is_authenticated %}
       <div class="nav-actions">
         <a class="nav-link nav-current" href="{% url 'ticket_list' %}"><span class="nav-dot"></span> Chamados</a>
+        <a class="nav-link nav-help" href="{% url 'knowledge_list' %}">Central de ajuda</a>
         <a class="btn btn-new" href="{% url 'ticket_create' %}"><span aria-hidden="true">＋</span> Novo chamado</a>
         <span class="user-chip"><span class="user-avatar">{{ user.username|slice:":1"|upper }}</span><span class="user-name">{{ user.get_full_name|default:user.username }}<small>{{ current_role.label }}</small></span></span>
         <form method="post" action="{% url 'logout' %}" class="m-0">
