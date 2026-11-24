@@ -48,7 +48,7 @@ O projeto separa configurações gerais, regras de negócio e telas por responsa
 | `manage.py` | Atalho para executar os comandos de administração do Django. |
 | `config/settings.py` | Aplicativos instalados, middleware, templates, banco e configurações gerais. |
 | `config/urls.py` | Conecta as rotas de autenticação, chamados e central de ajuda. |
-| `config/wsgi.py` | Expõe a aplicação WSGI usada por servidores de aplicação em produção. |
+| `config/wsgi.py` | Ponto de entrada WSGI que conecta um servidor compatível à aplicação Django. |
 | `accounts/roles.py` | Resolve o perfil do usuário a partir de superusuário e grupos. |
 | `accounts/context_processors.py` | Disponibiliza o perfil e o acesso de suporte aos templates. |
 | `tickets/models.py` | Define `Ticket`, `TicketNote` e a regra de visibilidade dos chamados. |
@@ -173,30 +173,6 @@ O comando de demonstração usa a senha `demo12345` para contas que cria. As con
 2. Abra **Articles** e escolha **Add**.
 3. Preencha título, sintomas (quando a orientação se aplica), solução passo a passo e categoria.
 4. Salve. O artigo aparecerá em `/ajuda/` e poderá ser encontrado pela busca e pelo filtro de categoria.
-
-## Publicação na internet
-
-O repositório está configurado para desenvolvimento local. **Não publique a configuração atual diretamente na internet.** Antes de expor o sistema, prepare uma configuração de produção para o provedor escolhido e confira pelo menos os itens abaixo:
-
-1. Defina `DEBUG = False` e carregue `SECRET_KEY` de um segredo configurado no provedor; não publique uma chave secreta no código.
-2. Configure `ALLOWED_HOSTS` com o domínio da aplicação e os hosts esperados pelo provedor. Configure também origens confiáveis de CSRF para o domínio HTTPS.
-3. Use um banco de dados persistente de produção, normalmente PostgreSQL. O SQLite local não deve ficar em um disco temporário de hospedagem.
-4. Configure a pasta de saída de arquivos estáticos (`STATIC_ROOT`) e o modo de servi-los em produção, por exemplo com WhiteNoise ou o serviço de arquivos estáticos do provedor. O `STATICFILES_DIRS` atual aponta para o CSS-fonte durante o desenvolvimento.
-5. Instale um servidor WSGI de produção, como Gunicorn, e configure o provedor para iniciar `config.wsgi:application`. `manage.py runserver` é apenas para desenvolvimento.
-6. Configure as definições e o serviço de e-mail se o sistema precisar enviar notificações; o projeto ainda não tem um fluxo de envio de e-mails configurado.
-7. Faça backup do banco, use HTTPS, crie um superusuário próprio e não execute `seed_demo` em produção.
-
-Depois de preparar as configurações específicas do ambiente, o fluxo usual de publicação é:
-
-```text
-Clonar o repositório no provedor
-Instalar as dependências de produção
-Aplicar migrações: python manage.py migrate
-Coletar arquivos estáticos: python manage.py collectstatic --noinput
-Iniciar o servidor WSGI usando config.wsgi:application
-```
-
-Os comandos exatos, a instalação do Gunicorn, a configuração do banco e a coleta de arquivos precisam corresponder ao provedor escolhido. Este repositório ainda não inclui um arquivo de configuração de deploy nem as dependências de um servidor WSGI; portanto, os passos acima são uma lista de preparação, não um deploy de um clique.
 
 ## Licença
 
