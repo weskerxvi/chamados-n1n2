@@ -1,30 +1,31 @@
 {% extends "base.html" %}
 {% block title %}Entrar | Helpdesk{% endblock %}
 
+{% block body_class %}login-page{% endblock %}
+{% block main_class %}login-main{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5 col-lg-4">
-    <div class="card shadow-sm">
-      <div class="card-body p-4">
-        <h1 class="h4 mb-3">Entrar</h1>
-        <form method="post">
-          {% csrf_token %}
-          {% if form.errors %}
-            <div class="alert alert-danger">Usuário ou senha inválidos.</div>
-          {% endif %}
-          <div class="mb-3">
-            <label class="form-label" for="id_username">Usuário</label>
-            <input class="form-control" type="text" name="username" id="id_username" autofocus required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="id_password">Senha</label>
-            <input class="form-control" type="password" name="password" id="id_password" required>
-          </div>
-          <input type="hidden" name="next" value="{{ next }}">
-          <button class="btn btn-primary w-100" type="submit">Entrar</button>
-        </form>
-      </div>
+<section class="login-wrap">
+  <div class="login-art">
+    <div>
+      <span class="brand-mark" aria-hidden="true">H</span>
+      <h1>Suporte que acompanha você.</h1>
+      <p>Um espaço simples para pedir ajuda, acompanhar cada etapa e voltar ao que importa.</p>
     </div>
+    <div class="login-art-foot">CLAREZA EM CADA ATENDIMENTO</div>
   </div>
-</div>
+  <div class="login-form-wrap">
+    <div class="eyebrow">Bem-vindo de volta</div>
+    <h2>Acesse sua conta</h2>
+    <p>Entre para acompanhar seus chamados.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}<div class="alert alert-danger app-alert">Usuário ou senha inválidos. Confira os dados e tente novamente.</div>{% endif %}
+      <div class="mb-3"><label class="form-label" for="id_username">Usuário</label><input class="form-control" type="text" name="username" id="id_username" autocomplete="username" autofocus required></div>
+      <div class="mb-3"><label class="form-label" for="id_password">Senha</label><input class="form-control" type="password" name="password" id="id_password" autocomplete="current-password" required></div>
+      <input type="hidden" name="next" value="{{ next }}">
+      <button class="btn btn-primary w-100" type="submit">Entrar na plataforma <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="login-note">Precisa de acesso? Fale com o administrador do sistema.</div>
+  </div>
+</section>
 {% endblock %}
